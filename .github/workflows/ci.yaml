@@ -1,0 +1,20 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:19.03.12
+        options: --privileged
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Docker Image
+        run: docker build -t rorlikow/ng-base -f Dockerfile.dev .
+
+      - name: Run Tests
+        run: docker run -e CI=true rorlikow/ng-base npm run test-headless
